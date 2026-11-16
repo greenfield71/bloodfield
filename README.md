@@ -17,10 +17,10 @@ engine — it's a general tool, not tied to any one event.
             └──────┬───────┘
      ┌────────────┼─────────────────────────────┐
      ▼            ▼                               ▼
- 1×SKELETON   2–3×COLLECTOR                   3–5×SOLVER         (≤6 agents total)
- ctf_skeleton  claim_category→ctf_collect      claim_next→solve→submit_flag→writeup
- (+60s wave    (0-token download + auto-solve;  (easy-first; one skill each; stays
-  loop)         never solves; no dup category)   inside its own folder; 2 phases)
+ 1×SKELETON   2–3×COLLECTOR                   ≤5×SOLVER slot     (≤6 agents total)
+ ctf_skeleton  claim_category→ctf_collect      claim_next→solve→submit→writeup→EXIT
+ (+60s wave    (0-token download + auto-solve;  (single-shot: 1 challenge each, refilled
+  loop)         never solves; no dup category)   by the orchestrator; one skill; own folder)
 ```
 
 - **Phase 1** (first attempt): **low** effort, **5:00** solve + **0:30** writeup. **Phase 2** (retry
@@ -45,7 +45,9 @@ Full contract: **[`AGENTS.md`](AGENTS.md)** — read it before driving.
 - Heavy I/O (list/download/submit) + trivial challenges never touch an LLM — **0 tokens**.
 - The orchestrator parallelises **collection and solving** across up to 6 agents, so solvers always
   have work and the easy points fall first.
-- No agent per challenge (cold start is ~40–50k tokens) — each solver drains **many** challenges.
+- **Single-shot solvers**: each solver does ONE challenge in a clean, small context, then exits and
+  the orchestrator spawns a fresh one — no challenge carries the previous ones' files/output along,
+  so later challenges stay cheap and a stuck solver can't wander into other folders.
 
 ## Two modes
 | You give… | Mode | Behaviour |

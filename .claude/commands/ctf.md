@@ -15,9 +15,11 @@ First decide the **mode** (see `AGENTS.md` §0):
   the site yourself — you only command sub-agents. In short:
   1. Spawn **1** `ctf-skeleton` agent → `ctf_skeleton($ARGUMENTS)`; then it loops every 60 s for waves.
   2. Spawn **3** `ctf-collector` agents (bootstrap) → each `claim_category → ctf_collect` until done.
-  3. As soon as the first category is collected, run **3 `solver` + 2 `ctf-collector`** (pool = 6):
-     solvers loop `claim_next` easy-first (phase 1, **low** effort, 5:00 + 0:30 box).
-  4. When all categories are collected, the 2 collectors become solvers → **5 solvers**.
+  3. As soon as the first category is collected, run **3 `solver` slots + 2 `ctf-collector`** (pool = 6):
+     each `solver` is **single-shot** — it does ONE challenge (easy-first, phase 1, **low** effort,
+     5:00 + 0:30 box) then exits; spawn a fresh `solver` on its completion to keep the slot full.
+  4. When all categories are collected, turn the 2 collector slots into solver slots → **5 single-shot
+     solver slots** (each refilled the moment its solver exits).
   5. Enforce the time-box manually: at 5:00 tell a solver to write its `writeup.md`; at 5:30 (hard)
      `TaskStop` it. Writeup is mandatory, solved or not.
   6. Print the report, then run **phase 2** for the hard ones with **3 solvers** at **medium** effort
