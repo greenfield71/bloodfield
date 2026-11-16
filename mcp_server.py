@@ -80,7 +80,8 @@ async def submit_flag(challenge_id: int, flag: str) -> dict:
 @mcp.tool(description=(
     "Record an outcome. status=FAILED when giving up (counts a try; phase-1 FAILED becomes "
     "phase-2 retry, auto-drops after MAX_TRIES so you never loop); status=SKIP to drop now. "
-    "Append a short dead-end note."))
+    "SOLVED is NOT accepted here — it is set ONLY by a verified submit_flag, so never mark SOLVED "
+    "yourself (a manual SOLVED is ignored; use SKIP if there is nothing to submit). Short note."))
 async def mark(challenge_id: int, status: str, note: str = "") -> dict:
     return coord.mark(challenge_id, status, note)
 

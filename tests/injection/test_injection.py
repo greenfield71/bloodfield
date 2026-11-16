@@ -115,6 +115,18 @@ async def main():
         if saved is not None:
             os.environ["CTF_FLAG"] = saved
 
+    # 9. mark SOLVED is NOT a manual override — only a verified submit sets SOLVED
+    r = coord.mark(777, "SOLVED", "i think i got it")           # no correct flag recorded for 777
+    check("manual mark SOLVED without a verified flag is ignored",
+          coord.get_status(777) != "SOLVED" and bool(r.get("warning")))
+    coord.record_flag(778, "flag{real}", "correct")
+    coord.mark(778, "SOLVED")
+    check("mark SOLVED honored once a correct flag is on record", coord.get_status(778) == "SOLVED")
+    coord.mark(779, "FAILED", "gave up")
+    check("mark FAILED still works", coord.get_status(779) in ("FAILED", "DROPPED"))
+    coord.mark(780, "SKIP")
+    check("mark SKIP still drops", coord.get_status(780) == "DROPPED")
+
     print(f"\n{PASS} passed, {FAIL} failed")
     return 1 if FAIL else 0
 

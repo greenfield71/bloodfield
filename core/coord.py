@@ -399,12 +399,26 @@ def set_flag_format(cid, fmt: str) -> None:
 
 
 def mark(cid, status: str, note: str = "") -> dict:
-    """Agent-facing outcome marker. FAILED counts a try; SKIP/DROP drops the challenge."""
+    """Agent-facing outcome marker. FAILED counts a try; SKIP/DROP drops the challenge.
+
+    SOLVED is NOT a manual override: it is set ONLY by a verified submit_flag (a 'correct'
+    result through throttled_submit). A manual mark SOLVED without a recorded correct flag is
+    IGNORED (returns a warning), so an over-optimistic agent can never falsely drop an unsolved
+    challenge. If there is nothing to submit, use SKIP."""
     status = status.upper()
     with _lock("queue.lock"):
         q = _load_q()
         c = q["challenges"].setdefault(str(cid), {"id": _int(cid), "tries": 0})
-        if status == "FAILED":
+        if status == "SOLVED":
+            if c.get("status") != "SOLVED" and not _has_correct_flag(cid):
+                warn = ("mark SOLVED ignored — SOLVED is set only by a verified submit_flag; "
+                        "submit the flag, or use SKIP if there is nothing to submit")
+                c["note"] = warn
+                _save_q(q)
+                res = dict(c); res["warning"] = warn
+                return res
+            c["status"] = "SOLVED"
+        elif status == "FAILED":
             c["tries"] = c.get("tries", 0) + 1
             c["status"] = "DROPPED" if c["tries"] >= getint("MAX_TRIES", 2) else "FAILED"
         elif status in ("SKIP", "DROP", "DROPPED"):
@@ -636,6 +650,14 @@ def flag_tried(cid, flag: str) -> bool:
             if line.split("\t")[0].strip() == flag:
                 return True
     return False
+
+
+def _has_correct_flag(cid) -> bool:
+    """True if a verified-correct flag is on record for this challenge (set by throttled_submit)."""
+    try:
+        return "\tcorrect\t" in flags_path(cid).read_text(errors="ignore")
+    except Exception:
+        return False
 
 
 def record_flag(cid, flag: str, status: str) -> None:

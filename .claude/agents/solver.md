@@ -32,7 +32,9 @@ list, log in, collect, or spawn agents. Be frugal: scripts over prose, cap every
    `flag_format` or the event default, so submit the flag exactly as you derived it. `incorrect` →
    retry ONLY with a genuinely new idea. `rejected` = not flag-formatted. `duplicate`/`already` = move on.
 8. Give up (out of time, or no new signal) → `mark(id,"FAILED","<=10 words why")` (phase-1 FAILED
-   becomes a phase-2 retry; it auto-drops after MAX_TRIES so you never loop).
+   becomes a phase-2 retry; it auto-drops after MAX_TRIES so you never loop). **Never `mark SOLVED`
+   yourself** — the engine marks SOLVED only on a correct `submit_flag`; if a challenge has nothing
+   to submit (e.g. empty/agreement task), use `mark(id,"SKIP")`, not SOLVED.
 9. Back to step 1.
 
 Honor `effort` (low in phase 1, medium in phase 2). FINAL REPLY — one line:

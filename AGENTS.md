@@ -60,7 +60,7 @@ MCP server `bloodfield` — equivalently `bin/ctf <cmd>` (same code, both agents
 | `ctf_collect(category,worker?)` | `collect CAT` | collector | download task.md+files for that category, run the auto-solver, auto-submit trivials (throttled), mark **collected**. |
 | `claim_next(worker?)` | `claim` | solver | atomically take the next **collected** challenge, easy-first, time-boxed. Returns `phase`, `effort`, `skill`, `flag_format`, time budgets, and local paths. `{done:true}` = none left. |
 | `submit_flag(id,flag)` | `submit ID FLAG` | solver | submit through the **format gate + per-challenge de-dup + global 10–30 s throttle**. Logs every flag to `flags.txt`. Marks SOLVED on `correct`. |
-| `mark(id,status,note)` | `mark ID STATUS` | solver | `FAILED` (give up — counts a try; phase-1→phase-2, drops after `MAX_TRIES`) / `SKIP`. |
+| `mark(id,status,note)` | `mark ID STATUS` | solver | `FAILED` (give up — counts a try; phase-1→phase-2, drops after `MAX_TRIES`) / `SKIP`. **Never `mark SOLVED` — SOLVED is set only by a verified `submit_flag`; a manual SOLVED is ignored.** |
 | `challenge_details(id)` | — | any | full details by id. |
 | `status()` | `status` | orchestrator | queue counts + per-category collected/uncollected + claim state + easy-first pending list. |
 | `ctf_sync(url?)` | `sync [url]` | (simple) | one-shot skeleton+collect-all. For SINGLE/small/inline use only — the orchestrated flow uses the split tools above. |
