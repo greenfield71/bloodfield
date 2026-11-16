@@ -13,8 +13,10 @@ BROWSER=firefox
 # Browser-like UA so submits don't look like a bot. Paired with the jitter below = low profile.
 CTFD_USER_AGENT=Mozilla/5.0 (X11; Linux x86_64; rv:133.0) Gecko/20100101 Firefox/133.0
 
-# Flag format (regex). Overridden by $CTF_FLAG env (bare prefix or regex) or a .flagfmt file.
-# Per event: `echo 'CyberZerk\{[^}]+\}' > .flagfmt`   (or `export CTF_FLAG=CyberZerk`).
+# Flag format (regex) — the EVENT DEFAULT. The engine ALSO auto-detects a per-challenge format
+# from each description; the gate then accepts that OR this default, so a correct flag is never
+# rejected over a mismatch. Force one everywhere with $CTF_FLAG env, or set an event-wide regex
+# with a .flagfmt file: `echo 'CyberZerk\{[^}]+\}' > .flagfmt`  (or `export CTF_FLAG=CyberZerk`).
 FLAG_REGEX=flag\{[^}]+\}
 
 # --- Global submit throttle (anti rate-limit / anti-suspicion) ---

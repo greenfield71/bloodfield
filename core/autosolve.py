@@ -101,9 +101,11 @@ def _cascade(seed: bytes, rx: re.Pattern, depth: int = 12, width: int = 6) -> st
     return None
 
 
-def autosolve(chaldir) -> tuple[str | None, str, str | None]:
-    """Return (trusted_flag_or_None, recon_text, untrusted_candidate_or_None)."""
-    rx = coord.flag_re()
+def autosolve(chaldir, cid=None) -> tuple[str | None, str, str | None]:
+    """Return (trusted_flag_or_None, recon_text, untrusted_candidate_or_None).
+
+    ``cid`` selects the per-challenge flag format (its declared format, else the event default)."""
+    rx = coord.flag_re(cid)
     chaldir = Path(chaldir)
     recon: list[str] = []
     flag: str | None = None

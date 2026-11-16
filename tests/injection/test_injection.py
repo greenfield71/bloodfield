@@ -94,6 +94,27 @@ async def main():
     check("control char blocked", not coord.valid_flag("flag{\x07bell}"))
     check("overlong blocked", not coord.valid_flag("flag{" + "A" * 600 + "}"))
 
+    # 8. per-challenge flag-format detection (the gate ADAPTS; a correct flag is never blocked)
+    check("detect explicit 'Flag format: HTB{...}'", coord.detect_flag_format("Flag format: HTB{...}") == r"HTB\{[^}]+\}")
+    check("detect single consistent prefix", coord.detect_flag_format("sample CyberZerk{aa} then CyberZerk{bb}") == r"CyberZerk\{[^}]+\}")
+    check("ambiguous prefixes -> no detection (use default)", coord.detect_flag_format("maybe flag{x} or HTB{y}?") is None)
+    check("no braces -> no detection", coord.detect_flag_format("just some prose, no format here") is None)
+
+    # union gate (with CTF_FLAG unset): a challenge that DECLARES HTB{...} accepts both its own
+    # format and the event default; the declared format never leaks to other challenges.
+    saved = os.environ.pop("CTF_FLAG", None)
+    try:
+        coord.set_flag_format(900, r"HTB\{[^}]+\}")
+        r900, r901, rnone = coord.flag_re(900), coord.flag_re(901), coord.flag_re(None)
+        check("declared format accepted for its own challenge", bool(r900.search(b"HTB{derived}")))
+        check("declared format isolated to its challenge", not r901.search(b"HTB{x}"))
+        check("format-less challenge gates exactly as event default", r901.pattern == rnone.pattern)
+        check("event default still accepted at declared challenge (union)",
+              bool(r900.search(b"flag{x}")) == bool(rnone.search(b"flag{x}")))
+    finally:
+        if saved is not None:
+            os.environ["CTF_FLAG"] = saved
+
     print(f"\n{PASS} passed, {FAIL} failed")
     return 1 if FAIL else 0
 

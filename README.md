@@ -58,11 +58,17 @@ Full contract: **[`AGENTS.md`](AGENTS.md)** — read it before driving.
 python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
 cp ctf.conf.example ctf.conf        # then set CTFD_TOKEN or CTFD_COOKIE=session=...
 cp .mcp.json.example .mcp.json      # set the two absolute paths to this checkout
-echo 'CyberZerk\{[^}]+\}' > .flagfmt   # per-event flag format (default is flag{...})
+# .flagfmt is OPTIONAL — the engine auto-detects each challenge's flag format from its
+# description, and the gate accepts that or the event default. Set one only to force an
+# event-wide format:  echo 'CyberZerk\{[^}]+\}' > .flagfmt
 ```
 Auth: set `CTFD_TOKEN` (Settings → Access Tokens) or `CTFD_COOKIE=session=…`, or just be logged into
 the CTF in Firefox/Chrome (auto-extracted). `ctf.conf`, `.mcp.json`, `.flagfmt` and `work/` are
 **gitignored** — your session cookie never leaves your machine.
+
+**Flag format** is handled automatically: if a challenge's description declares its format (or the
+whole event uses a non-standard one), the submit gate accepts it alongside the default, so a correct
+flag is never rejected over a mismatch. You only touch `.flagfmt`/`CTF_FLAG` to force a format.
 
 ## Use it
 ```bash

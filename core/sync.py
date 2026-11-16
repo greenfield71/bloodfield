@@ -90,8 +90,15 @@ async def collect(category: str | None = None, worker: str = "collector",
                         await _download(client, furl, fdir / _safe_name(furl))
                     except Exception:
                         pass
+            # per-challenge flag format: honor a format the description declares (else default)
+            try:
+                fmt = coord.detect_flag_format((cdir / "task.md").read_text())
+                if fmt:
+                    coord.set_flag_format(cid, fmt)
+            except Exception:
+                pass
             if do_autosolve and coord.get_status(cid) in ("NEW", None):
-                flag, recon, cand = autosolve.autosolve(cdir)
+                flag, recon, cand = autosolve.autosolve(cdir, cid)
                 (cdir / "recon.txt").write_text(recon)
                 if flag:
                     res = await coord.throttled_submit(
