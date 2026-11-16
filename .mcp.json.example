@@ -1,0 +1,9 @@
+{
+  "_comment": "Copy to .mcp.json and set the two absolute paths to THIS checkout. Claude Code auto-loads .mcp.json from the project root; tools then appear as mcp__bloodfield__*. Antigravity registers the same mcp_server.py its own way.",
+  "mcpServers": {
+    "bloodfield": {
+      "command": "/ABSOLUTE/PATH/TO/bloodfield/.venv/bin/python",
+      "args": ["/ABSOLUTE/PATH/TO/bloodfield/mcp_server.py"]
+    }
+  }
+}

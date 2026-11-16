@@ -1,0 +1,14 @@
+This directory vendors two files from the open-source project:
+
+    umbra2728/ctfd-mcp   —   https://github.com/umbra2728/ctfd-mcp
+    Licensed under the Apache License, Version 2.0 (see ./LICENSE).
+
+Vendored unmodified:
+    ctfd_client.py   — async CTFd REST client (auth, CSRF, challenges, attempt, containers)
+    config.py        — environment-based configuration
+
+These provide the CTFd protocol / auth / CSRF layer. The cyberzerk-ctf engine in ../core and
+../mcp_server.py uses them as a library and adds its own tool surface, the global submit
+throttle + flag-format gate, the easy-first queue/claim/time-box, file download, and the
+deterministic auto-solver. Those additions are this project's own code and are not part of the
+Apache-2.0 work above.

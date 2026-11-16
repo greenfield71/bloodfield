@@ -1,0 +1,51 @@
+# bloodfield config.  Copy to `ctf.conf` and fill in auth.  KEY=VALUE, no quotes.
+# Env vars override any key here.  CTFD_URL is persisted automatically after the first run.
+# NOTE: ctf.conf is gitignored — it holds your session cookie/token and must NEVER be committed.
+
+CTFD_URL=
+
+# --- Auth (pick what you have; precedence: TOKEN > COOKIE/env > browser auto-extract) ---
+CTFD_TOKEN=
+# Session cookie. Either "session=abc123" or the bare value. Blank = auto-extract from browser.
+CTFD_COOKIE=
+CTFD_CSRF_TOKEN=
+BROWSER=firefox
+# Browser-like UA so submits don't look like a bot. Paired with the jitter below = low profile.
+CTFD_USER_AGENT=Mozilla/5.0 (X11; Linux x86_64; rv:133.0) Gecko/20100101 Firefox/133.0
+
+# Flag format (regex). Overridden by $CTF_FLAG env (bare prefix or regex) or a .flagfmt file.
+# Per event: `echo 'CyberZerk\{[^}]+\}' > .flagfmt`   (or `export CTF_FLAG=CyberZerk`).
+FLAG_REGEX=flag\{[^}]+\}
+
+# --- Global submit throttle (anti rate-limit / anti-suspicion) ---
+# Every submission waits a RANDOM gap in [MIN,MAX] s since the previous one, serialized across
+# ALL agents via a global lock. Enforced in core/coord.py — no agent can bypass it.
+SUBMIT_MIN=10
+SUBMIT_MAX=30
+
+# --- Two-phase per-challenge time-box (stop-loss) ---
+# Phase 1 = first attempt: PHASE1_SOLVE s to solve + WRITEUP_BUDGET s for the writeup (default
+# 300+30 = 5:30). Phase 2 = retry after a phase-1 FAILED: PHASE2_SOLVE+WRITEUP (900+30 = 15:30).
+# A claim past its deadline is auto-released and counts a try; dropped after MAX_TRIES.
+PHASE1_SOLVE=300
+PHASE2_SOLVE=900
+WRITEUP_BUDGET=30
+MAX_TRIES=2
+
+# --- Orchestration pool shape (the main/orchestrator agent reads these; see AGENTS.md) ---
+POOL_MAX=6            # never run more than this many sub-agents at once
+COLLECTORS_BOOTSTRAP=3 # first wave: this many collectors race to gather the biggest category
+SOLVERS_MAIN=3       # steady state: this many solvers ...
+COLLECTORS_MAIN=2    # ... + this many collectors (3+2+skeleton = 6)
+END_POOL=3           # once everything is collected & easy ones done: shrink to this many
+WAVE_LOOP=60         # skeleton agent re-checks for new challenges every N seconds
+
+# Where the ctf-* category playbooks live. Default = the bundled ./skills (self-contained).
+# Claude Code also auto-loads them from ~/.claude/skills via the Skill tool.
+# SKILLS_DIR=/home/youruser/.claude/skills
+
+# Runtime data root (per-event folders live under here). Gitignored.
+WORK_DIR=work
+
+HTTP_TIMEOUT=20
+MAX_RECON_CHARS=2800

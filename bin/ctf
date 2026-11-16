@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# bloodfield — tool-agnostic entrypoint. Runs the engine via the project venv if present.
+# Usage: ctf skeleton [URL] | collect CAT | claim-category | sync [URL] | status |
+#        claim | submit ID FLAG | mark ID STATUS | structure | serve
+set -euo pipefail
+here="$(cd "$(dirname "$0")/.." && pwd)"
+py="$here/.venv/bin/python"
+[ -x "$py" ] || py="python3"
+exec "$py" "$here/core/cli.py" "$@"

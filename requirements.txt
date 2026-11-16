@@ -1,0 +1,7 @@
+# mcp pinned to v1.x: this server uses the FastMCP API (renamed to MCPServer in mcp 2.x).
+# The stdio protocol is client-agnostic, so Claude Code / Antigravity don't care about this pin.
+mcp>=1.2,<2
+httpx>=0.27
+python-dotenv>=1.0
+# optional — enables "just give a link" browser-cookie auto-extract (ctfd.py imports it lazily):
+browser-cookie3>=0.19

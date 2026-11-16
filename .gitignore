@@ -1,0 +1,20 @@
+# secrets / machine-specific — NEVER commit
+ctf.conf
+.mcp.json
+.flagfmt
+.env
+*.cookie
+*.session
+
+# runtime data (per-event challenge folders, queue, locks, downloaded files)
+work/
+state/
+
+# python / venv
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# os cruft
+.DS_Store
